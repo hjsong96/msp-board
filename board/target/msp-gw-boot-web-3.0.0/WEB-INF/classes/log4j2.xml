@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration name="Morpheus" status="INFO" monitorInterval="60">
+    <!-- Properties -->
+    <Properties>
+        <Property name="LOG_DIR">/Users/uracle/log/gw</Property>
+        <Property name="LOG_APPENDER">console</Property>
+        <Property name="LOG_PATTERN">%d{MM/dd HH:mm:ss}, %-5p (%C{3}) : %m%n</Property>
+    </Properties>
+
+    <!-- Appenders -->
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+        <RollingFile name="file" fileName="${LOG_DIR}/msp_stdout.log" filePattern="${LOG_DIR}/msp_stdout.log.%d{yyyy-MM-dd}">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${LOG_DIR}" maxDepth="1">
+                    <IfFileName glob="msp_stdout.log.????-??-??">
+                        <IfLastModified age="30d"/>
+                    </IfFileName>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+
+    <!-- Application Loggers -->
+    <Loggers>
+        <Logger name="kr.msp" level="debug" additivity="false">
+            <AppenderRef ref="${LOG_APPENDER}"/>
+        </Logger>
+        <Logger name="org.springdoc" level="info" additivity="false">
+            <AppenderRef ref="${LOG_APPENDER}"/>
+        </Logger>
+        <Logger name="org.springframework" level="info" additivity="false">
+            <AppenderRef ref="${LOG_APPENDER}"/>
+        </Logger>
+        <Root level="info">
+            <AppenderRef ref="${LOG_APPENDER}"/>
+        </Root>
+    </Loggers>
+</Configuration>

@@ -1,0 +1,83 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+    context-path: /
+    
+logging:
+  level:
+    org.mybatis: DEBUG    
+    
+spring:
+  mvc:
+    view:
+      prefix: /WEB-INF/jsp/
+      suffix: .jsp   
+#  messages:
+#    basename: message/messages
+#  datasource:
+#    driver-class-name: org.mariadb.jdbc.Driver
+#    url: jdbc:mariadb://localhost:3306/practice
+#    username: root
+#    password: U00449
+#
+mybatis:
+  mapper-locations: classpath:/sqlmap/mysql/**/*.xml
+
+msp:
+  gateway:
+    datasource:
+      driver-class-name: org.mariadb.jdbc.Driver
+      url: jdbc:mariadb://localhost:3306/practice
+      username: root
+      password: U00449
+#msp:
+#  gateway:
+#    datasource:
+#      driver-class-name: org.h2.Driver
+#      url: jdbc:h2:mem:test;MODE=Oracle
+#      username: sa
+#      password:
+#msp:
+#  gateway:
+#    datasource:
+#      driver-class-name: oracle.jdbc.OracleDriver
+#      url: jdbc:oracle:thin:@localhost:1521:LAB
+#      username: test
+#      password: test
+#      jndi-name: jdbc/msp_mysql
+    mybatis:
+      platform: oracle #oracle, oracle9i, postgresql, oracle, mssql, informix, db2
+    resource-update:
+      use-force-https: true
+      https-port: 443
+      download-url:
+      download-type: filename
+    event-log:
+      path: /Users/uracle/temp/log/msp-gw/eventlogs
+      enabled: false
+      cron: 0 0/30 * * * ?
+    app-store:
+      bin-path: apk
+      upload-path: /apps/msp-admin/
+      service-path: http://127.0.0.1/msp-admin/
+
+file:
+  upload:
+    location: /Users/uracle/temp/trash/upload
+
+http:
+  server:
+    url: http://localhost:9090
+  legacy:
+    url: http://localhost:8080/msp-gw/api/file/download/
+    download: /Users/uracle/temp/trash/download/
+  push:
+    url: http://127.0.0.1:8380
+    
+jwt:
+  secret-key: "i9XJt9h3QdBzG2ElXRA1L3QJkfHs9DNLnCQzQtLjU4w="
+  expiration-time: 3600000

@@ -20,11 +20,12 @@ public class JwtUtil {
 		this.expirationTime = expirationTime;
 	}
 	
-	public String generateToken(String userID) {
+	public String generateToken(String userID, int userRank) {
 		return Jwts.builder()
 				.setSubject(userID)
 				.setIssuedAt(new Date())
 				.setExpiration(new Date(System.currentTimeMillis() + expirationTime))
+				.claim("role", userRank)
 				.signWith(key, SignatureAlgorithm.HS256)
 				.compact();
 	}
@@ -40,4 +41,17 @@ public class JwtUtil {
 	        throw new JwtException("JWT token이 만료되었습니다. 재로그인 바랍니다.");
 	    }
 	}
+	
+	// JWT에서 userRank (role) 값을 추출
+	public int getUserRole(String token) {
+		Claims claims = validateToken(token);  // 토큰을 검증한 후 Claims 객체 얻기
+		return (Integer) claims.get("role");  // role claim을 추출
+	}
+
+	// JWT에서 userID 추출
+	public String getUserID(String token) {
+		Claims claims = validateToken(token);  // 토큰을 검증한 후 Claims 객체 얻기
+		return claims.getSubject();  // subject는 userID
+	}
+	
 }

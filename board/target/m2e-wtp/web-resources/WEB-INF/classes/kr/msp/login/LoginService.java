@@ -14,9 +14,6 @@ public class LoginService {
 	public LoginService(SqlSessionTemplate sqlSessionTemplate) {
 		this.sqlSessionTemplate = sqlSessionTemplate;
 	}
-	
-	@Autowired
-	private JwtUtil jwtUtil;
 
 	public Map<String, Object> findByUserIdAndPassword(User user) {
 		LoginMapper loginMapper = sqlSessionTemplate.getMapper(LoginMapper.class);

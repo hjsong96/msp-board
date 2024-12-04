@@ -7,11 +7,11 @@
 
     <!-- id로 사용자 정보를 조회하는 쿼리 -->
     <select id="findByUserIdAndPassword" resultType="Hashmap">
-        SELECT user_id as userID
-             , user_pw as userPW
+        SELECT userID
+             , userRank
         FROM user
-        WHERE user_id = #{userID}
-        AND user_pw = #{userPW}
+        WHERE userID = #{userID}
+        AND userPW = #{userPW}
     </select>
 
 </mapper>

@@ -16,20 +16,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import kr.morpheus.gateway.module.AbstractModule;
 import kr.morpheus.gateway.protocol.Response;
 import kr.morpheus.gateway.protocol.ResponseCode;
 import kr.morpheus.gateway.protocol.ResponseHeader;
 
-/*import kr.msp.response.Response;
-import kr.msp.response.ResponseCode;
-import kr.msp.response.ResponseHeader;*/
-
 @RestController
 @RequestMapping("/api/auth/login")
-public class LoginController {
+public class LoginController extends AbstractModule {
 	
 	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
-
 	private final LoginService loginService;
 	private final Environment env;
 	private final JwtUtil jwtUtil;
@@ -57,9 +53,10 @@ public class LoginController {
 		String userID = user.getUserID();
 		
 		Map<String, Object> checkedUser = loginService.findByUserIdAndPassword(user);
-
+		
 		if (checkedUser != null && !checkedUser.isEmpty()) {
-			String jwt = jwtUtil.generateToken(userID);
+			int userRank = (int) checkedUser.get("userRank");
+			String jwt = jwtUtil.generateToken(userID, userRank);
 			checkedUser.put("token", jwt);
 			ResponseHeader responseHeader = new ResponseHeader(ResponseCode.OK, "사용자 조회 완료");
 			

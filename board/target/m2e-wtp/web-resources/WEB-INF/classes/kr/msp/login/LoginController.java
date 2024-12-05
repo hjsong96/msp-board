@@ -3,7 +3,6 @@ package kr.msp.login;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import kr.morpheus.gateway.constant.Const;
 import kr.morpheus.gateway.module.AbstractModule;
 import kr.msp.response.Response;
 import kr.msp.response.ResponseHeader;

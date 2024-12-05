@@ -9,6 +9,7 @@
     <select id="findByUserIdAndPassword" resultType="Hashmap">
         SELECT userID
              , userRank
+             , userName
         FROM user
         WHERE userID = #{userID}
         AND userPW = #{userPW}

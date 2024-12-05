@@ -1,0 +1,60 @@
+{
+  "groups": [
+    {
+      "name": "file.upload",
+      "type": "kr.msp.example.file.FileProperties",
+      "sourceType": "kr.msp.example.file.FileProperties"
+    },
+    {
+      "name": "http",
+      "type": "kr.msp.example.http.HttpProperties",
+      "sourceType": "kr.msp.example.http.HttpProperties"
+    },
+    {
+      "name": "http.legacy",
+      "type": "kr.msp.example.http.HttpProperties$Legacy",
+      "sourceType": "kr.msp.example.http.HttpProperties",
+      "sourceMethod": "getLegacy()"
+    },
+    {
+      "name": "http.push",
+      "type": "kr.msp.example.http.HttpProperties$Push",
+      "sourceType": "kr.msp.example.http.HttpProperties",
+      "sourceMethod": "getPush()"
+    },
+    {
+      "name": "http.server",
+      "type": "kr.msp.example.http.HttpProperties$Server",
+      "sourceType": "kr.msp.example.http.HttpProperties",
+      "sourceMethod": "getServer()"
+    }
+  ],
+  "properties": [
+    {
+      "name": "file.upload.location",
+      "type": "java.lang.String",
+      "sourceType": "kr.msp.example.file.FileProperties"
+    },
+    {
+      "name": "http.legacy.download",
+      "type": "java.lang.String",
+      "sourceType": "kr.msp.example.http.HttpProperties$Legacy"
+    },
+    {
+      "name": "http.legacy.url",
+      "type": "java.lang.String",
+      "sourceType": "kr.msp.example.http.HttpProperties$Legacy"
+    },
+    {
+      "name": "http.push.url",
+      "type": "java.lang.String",
+      "sourceType": "kr.msp.example.http.HttpProperties$Push"
+    },
+    {
+      "name": "http.server.url",
+      "type": "java.lang.String",
+      "sourceType": "kr.msp.example.http.HttpProperties$Server"
+    }
+  ],
+  "hints": []
+}

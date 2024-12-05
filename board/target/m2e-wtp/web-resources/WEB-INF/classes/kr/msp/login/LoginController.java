@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,13 +13,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.morpheus.gateway.module.AbstractModule;
+import kr.msp.exception.CustomException;
+import kr.msp.exception.TypeErrorException;
 import kr.msp.response.Response;
+import kr.msp.response.ResponseCode;
 import kr.msp.response.ResponseHeader;
 import kr.msp.util.Utils;
 
@@ -40,28 +45,34 @@ public class LoginController extends AbstractModule {
     }
 
     @PostMapping
-    public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> login(@RequestBody User user, HttpSession session) {
+    public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> login(@Valid @RequestBody User user, HttpSession session) {
         Map<String, Object> responseMap = new HashMap<>();
-    	
-    	String userID = user.getUserID();
-        Map<String, Object> checkedUser = loginService.findByUserIdAndPassword(user);
         
-        ResponseHeader responseHeader = Utils.createResponseHeader(checkedUser);
-
-        if (checkedUser != null && !checkedUser.isEmpty()) {
-        	responseMap.putAll(checkedUser);
-            logger.info("Login successful for user: {}", userID);
-        } else {
-            logger.warn("Login failed for user: {}", userID);
-            if (checkedUser == null) {
-            	checkedUser = new HashMap<>();
+        try {
+            if (user.getUserID() == null || user.getUserPW() == null) {
+                throw new IllegalArgumentException("필수 파라미터를 지정하지 않음");
             }
-            responseMap.putAll(checkedUser);
-        }
-        responseMap.put("resultCode", responseHeader.getResult_code());
-        responseMap.put("resultMsg", responseHeader.getResult_msg());
+            
+            Map<String, Object> checkedUser = loginService.findByUserIdAndPassword(user);
 
-        return ResponseEntity.status(checkedUser == null ? HttpStatus.NO_CONTENT : HttpStatus.OK)
-                .body(new Response<>(responseHeader, responseMap));
+            if (checkedUser == null) {
+                throw new CustomException (HttpStatus.NO_CONTENT, "서버 요청은 성공했으나, 클라이언트에 보내줄 데이터가 없음");
+            }
+            
+            // 로그인 성공
+            responseMap.putAll(checkedUser);
+            return Utils.buildOkResponse(ResponseCode.OK, responseMap);
+
+        } catch (IllegalArgumentException e) {
+        	logger.warn("필수 파라미터 없음: {}", e.getMessage());
+        	return Utils.buildBadResponse(ResponseCode.MISSING_PARAMETER, responseMap);
+        } catch (CustomException e) {
+        	logger.warn("데이터 없음: {}", e.getMessage());
+        	return Utils.buildBadResponse(ResponseCode.NoContent, responseMap);
+        } catch (Exception e) {
+        	logger.warn("서버 오류: {}", e.getMessage());
+        	return Utils.buildBadResponse(ResponseCode.INTERNAL_SERVER_ERROR, responseMap);
+        }
     }
+
 }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.msp.login.LoginMapper">
+
+    <!-- id로 사용자 정보를 조회하는 쿼리 -->
+    <select id="findByUserIdAndPassword" resultType="Hashmap">
+        SELECT userID
+             , userRank
+             , userName
+        FROM user
+        WHERE userID = #{userID}
+        AND userPW = #{userPW}
+    </select>
+
+</mapper>

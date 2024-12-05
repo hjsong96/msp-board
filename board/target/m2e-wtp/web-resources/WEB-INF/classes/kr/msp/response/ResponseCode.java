@@ -20,7 +20,7 @@ public enum ResponseCode {
     RESOURCE_NOT_EXIST(404, "RESOURCE_NOT_EXIST", "특정 리소스를 찾을 수 없음"),
     CONFLICT(409, "CONFLICT", "요청 리소스와 충돌 발생"),
     ALREADY_EXIST(409, "ALREADY_EXIST", "요청 리소스가 이미 존재함"),
-    INTERNAL_SERVER_ERROR(500, "INTERNAL_SERVER_ERROR", "서버 내부 오류 발생"),
+    INTERNAL_SERVER_ERROR(500, "INTERNAL_SERVER_ERROR", "서버 오류 발생"),
     SERVICE_UNAVAILABLE(503, "SERVICE_UNAVAILABLE", "일시적인 서버 오류 발생"),
     UNKNOWN(999, "UNKNOWN", "확인 불가");
 

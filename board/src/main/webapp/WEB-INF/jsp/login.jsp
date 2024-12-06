@@ -45,6 +45,7 @@
                     // 로그인 성공 시, JWT 토큰을 받아 처리
                     if (response.body && response.body.resultCode === "200") {
                         alert("로그인 성공했습니다.");
+                        window.location.href = '/api/boardList';
                     } else {
                         alert("로그인 실패: " + (response.body ? response.body.resultMsg : "알 수 없는 오류"));
                     }

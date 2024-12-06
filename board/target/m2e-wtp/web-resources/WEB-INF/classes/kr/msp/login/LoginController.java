@@ -14,65 +14,87 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import kr.morpheus.gateway.module.AbstractModule;
-import kr.msp.exception.CustomException;
-import kr.msp.exception.TypeErrorException;
+import kr.msp.dto.User;
+import kr.msp.exception.NoContentException;
+import kr.msp.notUsed.TypeErrorException;
 import kr.msp.response.Response;
 import kr.msp.response.ResponseCode;
 import kr.msp.response.ResponseHeader;
 import kr.msp.util.Utils;
 
-@RestController
-@RequestMapping("/api/user/login")
+@Controller
+@RequestMapping("/api/user")
 public class LoginController extends AbstractModule {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+    
     private final LoginService loginService;
     private final Environment env;
+    private final SessionManager sessionManage;
 
     @Value("${msp.gateway.event-log.enabled:true}")
     private boolean enabled;
 
     @Autowired
-    public LoginController(LoginService loginService, Environment env) {
+    public LoginController(LoginService loginService, Environment env, SessionManager sessionManager) {
         this.loginService = loginService;
         this.env = env;
+        this.sessionManage = sessionManager;
     }
+    
+	@GetMapping(value = "/login")
+	public ModelAndView index() {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("login");
+		return modelAndView;
+	}
 
-    @PostMapping
-    public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> login(@Valid @RequestBody User user, HttpSession session) {
+    @PostMapping("/login")
+    public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> login(@Valid @RequestBody User user) {
         Map<String, Object> responseMap = new HashMap<>();
         
-        try {
-            if (user.getUserID() == null || user.getUserPW() == null) {
-                throw new IllegalArgumentException("필수 파라미터를 지정하지 않음");
-            }
-            
-            Map<String, Object> checkedUser = loginService.findByUserIdAndPassword(user);
-
-            if (checkedUser == null) {
-                throw new CustomException (HttpStatus.NO_CONTENT, "서버 요청은 성공했으나, 클라이언트에 보내줄 데이터가 없음");
-            }
-            
-            // 로그인 성공
-            responseMap.putAll(checkedUser);
-            return Utils.buildOkResponse(ResponseCode.OK, responseMap);
-
-        } catch (IllegalArgumentException e) {
-        	logger.warn("필수 파라미터 없음: {}", e.getMessage());
-        	return Utils.buildBadResponse(ResponseCode.MISSING_PARAMETER, responseMap);
-        } catch (CustomException e) {
-        	logger.warn("데이터 없음: {}", e.getMessage());
-        	return Utils.buildBadResponse(ResponseCode.NoContent, responseMap);
-        } catch (Exception e) {
-        	logger.warn("서버 오류: {}", e.getMessage());
-        	return Utils.buildBadResponse(ResponseCode.INTERNAL_SERVER_ERROR, responseMap);
+    	//비즈니스 로직
+        Map<String, Object> checkedUser = loginService.findByUserIdAndPassword(user);
+        
+        // 로그인 성공
+        responseMap.putAll(checkedUser);
+        sessionManage.setAttribute("userID", checkedUser.get("userID"));
+        
+        System.out.println(sessionManage.getAttribute("userID"));
+        
+        if (sessionManage.getAttribute("userID") != null) {
+        	System.out.println(sessionManage.getAttribute("userID"));
+            logger.info("Session invalidated successfully");
+        } else {
+            logger.error("Session invalidation failed");
         }
+        
+        return Utils.buildOkResponse(ResponseCode.OK, responseMap);
     }
-
+    
+    @PostMapping("/logout")
+    public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> logout() {
+    	sessionManage.invalidate();
+    	
+        if (sessionManage.getAttribute("userID") == null) {
+        	System.out.println(sessionManage.getAttribute("userID"));
+            logger.info("Session invalidated successfully");
+        } else {
+            logger.error("Session invalidation failed");
+        }
+    	
+    	Map<String, Object> responseMap = new HashMap<>();
+    	return Utils.buildOkResponse(ResponseCode.OK, responseMap);
+    }
+    
+    
 }

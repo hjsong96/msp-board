@@ -5,21 +5,13 @@
 
 <mapper namespace="kr.msp.board.BoardMapper">
 
-    <!-- id로 사용자 정보를 조회하는 쿼리 -->
 	<select id="getBoardList" resultType="HashMap">
-	    SELECT b.boardNo AS boardNo,
-	           b.boardType AS boardType,
-	           b.boardTitle AS boardTitle,
-	           b.commentCount AS commentCount,
-	           DATE_FORMAT(b.boardCreateDate, '%Y-%m-%d') AS boardCreateDate,
-	           b.boardUpdateDate AS boardUpdateDate,
-	           b.userID AS userID,
-	           u.userName AS userName,
-	           u.userRank AS userRank
-	    FROM board b
-	    JOIN user u
-	      ON b.userID = u.userID
-	    WHERE u.userID = #{userID}
+	    SELECT boardNo,
+	           boardType,
+	           boardTitle,
+	           commentCount,
+	           DATE_FORMAT(boardCreateDate, '%Y-%m-%d') AS boardCreateDate
+	    FROM board
 	</select>
 
 

@@ -37,27 +37,28 @@
 
             // 서버에 로그인 요청 (AJAX)
             $.ajax({
-                url: '/api/auth/login', // 로그인 요청 URL
+                url: '/api/user/login', // 로그인 요청 URL
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({ userID: userID, userPW: userPW }), // JSON 형태로 데이터 전송
                 success: function(response) {
                     // 로그인 성공 시, JWT 토큰을 받아 처리
-                    if (response.head.result_code === "200" && response.body.token) {
+                    if (response.body && response.body.resultCode === "200") {
                         alert("로그인 성공했습니다.");
-                        document.cookie = "token=" + response.body.token + "; path=/;";
-                        window.location.href = "/"; 
                     } else {
-                        alert("로그인 실패: " + response.head.result_msg);
+                        alert("로그인 실패: " + (response.body ? response.body.resultMsg : "알 수 없는 오류"));
                     }
                 },
                 error: function(xhr, status, error) {
-                    // 상태 코드 확인 후 적절한 메시지 출력
-                    if (xhr.status === 401) {
-                        alert("잘못된 아이디나 비밀번호입니다.");
-                    } else {
-                        alert("로그인 실패: 서버 오류 발생");
+                    let resultMsg = "로그인 실패: 서버 오류 발생";
+
+                    // 응답이 JSON 형식인지 확인하고 resultMsg를 가져옴
+                    if (xhr.responseJSON) {
+                        const body = xhr.responseJSON.body || {};
+                        resultMsg = body.resultMsg || resultMsg;
                     }
+
+                    alert(resultMsg); // resultMsg는 "요청 리소스를 찾을 수 없음" 등의 메시지
                 }
             });
         });

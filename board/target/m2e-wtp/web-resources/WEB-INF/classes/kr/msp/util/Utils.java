@@ -1,5 +1,7 @@
 package kr.msp.util;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -21,11 +23,12 @@ public class Utils {
         return ResponseEntity.ok(new Response<>(responseHeader, responseMap));
     }
     
-    public static ResponseEntity<Response<ResponseHeader, Map<String, Object>>> buildBadResponse(ResponseCode responseCode, Map<String, Object> responseMap) {
+    public static ResponseEntity<Response<ResponseHeader, Map<String, Object>>> buildBadResponse(ResponseCode responseCode) {
         ResponseHeader responseHeader = new ResponseHeader();
         responseHeader.setResult_code(responseCode.getCode());
         responseHeader.setResult_msg(responseCode.getMessage());
         
+        Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("resultCode", responseCode.getCode());
         responseMap.put("resultMsg", responseCode.getMessage());
         

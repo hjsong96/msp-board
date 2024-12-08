@@ -2,6 +2,8 @@ package kr.msp.exception;
 
 import java.nio.file.AccessDeniedException;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.SQLSyntaxErrorException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,8 +11,11 @@ import javax.naming.AuthenticationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -43,7 +48,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoContentException.class)
     public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> handleNoContentException(NoContentException e) {
         logger.warn("사용자 정의 예외: {}", e.getMessage());
-        return Utils.buildBadResponse(ResponseCode.NoContent);
+        return Utils.buildBadResponse(ResponseCode.NO_CONTENT);
     }
     
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -77,27 +82,37 @@ public class GlobalExceptionHandler {
     }
     
     @ExceptionHandler(ResourceConflictException.class)
-    public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> handleResourceConflict(NotFoundException e) {
+    public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> handleResourceConflict(ResourceConflictException e) {
         logger.error("리소스 충돌 오류: {}", e.getMessage(), e);
         return Utils.buildBadResponse(ResponseCode.ALREADY_EXIST);
     }
     
     @ExceptionHandler(SessionExpiredException.class)
-    public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> handleSessionExpiredException(Exception e) {
+    public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> handleSessionExpiredException(SessionExpiredException e) {
         logger.error("세션만료: {}", e.getMessage(), e);
-        return Utils.buildBadResponse(ResponseCode.SessionExpired);
+        return Utils.buildBadResponse(ResponseCode.SESSION_EXPIRED);
+    }
+    
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> handleDataAccessException(DataAccessException e) {
+        if (e instanceof DuplicateKeyException) {
+            logger.error("리소스 충돌 오류: {}", e.getMessage(), e);
+            return Utils.buildBadResponse(ResponseCode.ALREADY_EXIST);
+        }
+    	
+    	logger.error("데이터베이스 오류: {}", e.getMessage(), e);
+        return Utils.buildBadResponse(ResponseCode.DATABASE_ERROR);
     }
     
     @ExceptionHandler({SQLException.class, IOException.class, NullPointerException.class})
     public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> handleServerError(Exception e) {
-        logger.error("서버 오류: {}", e.getMessage(), e);  // 서버 오류 로그
+        logger.error("서버 오류: {}", e.getMessage(), e);
         return Utils.buildBadResponse(ResponseCode.INTERNAL_SERVER_ERROR);
     }
-
+    
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> handleGeneralException(Exception e) {
         logger.error("알 수 없는 오류: {}", e.getMessage(), e);
         return Utils.buildBadResponse(ResponseCode.UNKNOWN);
     }
-    
 }

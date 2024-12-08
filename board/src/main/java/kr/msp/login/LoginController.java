@@ -3,7 +3,6 @@ package kr.msp.login;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -11,21 +10,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import kr.morpheus.gateway.module.AbstractModule;
 import kr.msp.dto.User;
-import kr.msp.exception.NoContentException;
-import kr.msp.notUsed.TypeErrorException;
 import kr.msp.response.Response;
 import kr.msp.response.ResponseCode;
 import kr.msp.response.ResponseHeader;
@@ -69,15 +63,6 @@ public class LoginController extends AbstractModule {
         responseMap.putAll(checkedUser);
         sessionManage.setAttribute("userID", checkedUser.get("userID"));
         
-        System.out.println(sessionManage.getAttribute("userID"));
-        
-        if (sessionManage.getAttribute("userID") != null) {
-        	System.out.println(sessionManage.getAttribute("userID"));
-            logger.info("Session invalidated successfully");
-        } else {
-            logger.error("Session invalidation failed");
-        }
-        
         return Utils.buildOkResponse(ResponseCode.OK, responseMap);
     }
     
@@ -85,14 +70,8 @@ public class LoginController extends AbstractModule {
     public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> logout() {
     	sessionManage.invalidate();
     	
-        if (sessionManage.getAttribute("userID") == null) {
-        	System.out.println(sessionManage.getAttribute("userID"));
-            logger.info("Session invalidated successfully");
-        } else {
-            logger.error("Session invalidation failed");
-        }
-    	
     	Map<String, Object> responseMap = new HashMap<>();
+    	
     	return Utils.buildOkResponse(ResponseCode.OK, responseMap);
     }
     

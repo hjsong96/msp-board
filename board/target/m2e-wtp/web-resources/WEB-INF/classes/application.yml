@@ -6,7 +6,9 @@ server:
       enabled: true
       force: true
     context-path: /
-    
+    session:
+      timeout: 1h  # 세션 만료 시간 설정 (1시간)
+      
 logging:
   level:
     org.mybatis: DEBUG    

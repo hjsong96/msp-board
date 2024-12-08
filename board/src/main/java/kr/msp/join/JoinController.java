@@ -3,18 +3,19 @@ package kr.msp.join;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import kr.msp.login.LoginService;
-import kr.msp.login.SessionManager;
+import kr.msp.dto.User;
 import kr.msp.response.Response;
 import kr.msp.response.ResponseCode;
 import kr.msp.response.ResponseHeader;
@@ -35,19 +36,25 @@ public class JoinController {
         this.joinService = joinService;
         this.env = env;
     }
+    
+	@PostMapping("/checkID")
+	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> checkID(@RequestBody @Valid User user) {
+		Map<String, Object> responseMap = new HashMap<String, Object>();
+		
+		joinService.checkUserIdExists(user);
+		
+		return Utils.buildOkResponse(ResponseCode.OK, responseMap);
+	}
 	
 	@PostMapping("/join")
-	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> join() {
+	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> join(@RequestBody @Valid User user) {
 		Map<String, Object> responseMap = new HashMap<String, Object>();
+		
+		joinService.joinUser(user);
 		
 		return Utils.buildOkResponse(ResponseCode.OK, responseMap);
 	}
 	
-	@PostMapping("/checkID")
-	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> checkID() {
-		Map<String, Object> responseMap = new HashMap<String, Object>();
-		
-		return Utils.buildOkResponse(ResponseCode.OK, responseMap);
-	}
+
 
 }

@@ -16,7 +16,7 @@ import kr.msp.exception.NotFoundException;
 public class LoginService {
 	
 	private final SqlSessionTemplate sqlSessionTemplate;
-    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger logger = LoggerFactory.getLogger(LoginService.class);
     
 	public LoginService(SqlSessionTemplate sqlSessionTemplate) {
 		this.sqlSessionTemplate = sqlSessionTemplate;

@@ -61,6 +61,7 @@
                     // 로그인 성공 시, JWT 토큰을 받아 처리
                     if (response.body.resultCode === "200") {
                         alert("로그아웃 성공했습니다.");
+                        window.location.href = '/api/user/login';
                     } else {
                         alert("로그인 실패: " + response.body.resultMsg);
                     }

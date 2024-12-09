@@ -33,8 +33,8 @@ public class GlobalExceptionHandler {
 	
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> handleIllegalArgumentException(IllegalArgumentException e) {
+    @ExceptionHandler(NoParameterException.class)
+    public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> handleNoParameterException(NoParameterException e) {
         logger.warn("클라이언트 오류: {}", e.getMessage());
         return Utils.buildBadResponse(ResponseCode.MISSING_PARAMETER);
     }
@@ -108,6 +108,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> handleServerError(Exception e) {
         logger.error("서버 오류: {}", e.getMessage(), e);
         return Utils.buildBadResponse(ResponseCode.INTERNAL_SERVER_ERROR);
+    }
+    
+    @ExceptionHandler(NoRowsAffectedException.class)
+    public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> handleNoRowsAffectedException(NoRowsAffectedException e) {
+        logger.error("리소스 반영 없음: {}", e.getMessage(), e);
+        return Utils.buildBadResponse(ResponseCode.NO_ROWS_AFFECTED);
     }
     
     @ExceptionHandler(Exception.class)

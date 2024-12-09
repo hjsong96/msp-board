@@ -80,6 +80,6 @@ http:
   push:
     url: http://127.0.0.1:8380
     
-jwt:
-  secret-key: "i9XJt9h3QdBzG2ElXRA1L3QJkfHs9DNLnCQzQtLjU4w="
-  expiration-time: 3600000
+#jwt:
+#  secret-key: "i9XJt9h3QdBzG2ElXRA1L3QJkfHs9DNLnCQzQtLjU4w="
+#  expiration-time: 3600000

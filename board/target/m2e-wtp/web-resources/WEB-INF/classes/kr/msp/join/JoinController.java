@@ -47,7 +47,7 @@ public class JoinController {
 	}
 	
 	@PostMapping("/join")
-	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> join(@RequestBody @Valid User user) {
+	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> joinUser(@RequestBody @Valid User user) {
 		Map<String, Object> responseMap = new HashMap<String, Object>();
 		
 		joinService.joinUser(user);

@@ -9,5 +9,5 @@ import kr.msp.dto.User;
 @Mapper
 public interface LoginMapper {
 	
-	Map<String,Object> findByUserIdAndPassword(User user);
+	Map<String,Object> findByUserId(User user);
 }

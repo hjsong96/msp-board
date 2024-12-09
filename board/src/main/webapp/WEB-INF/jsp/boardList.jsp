@@ -52,6 +52,7 @@
 <script>
     $(document).ready(function() {
         $('#logOutBtn').on('click', function() {
+        	
             // 서버에 로그인 요청 (AJAX)
             $.ajax({
                 url: '/api/user/logout', // 로그인 요청 URL

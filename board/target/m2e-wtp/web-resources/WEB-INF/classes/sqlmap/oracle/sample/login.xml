@@ -6,13 +6,13 @@
 <mapper namespace="kr.msp.login.LoginMapper">
 
     <!-- id로 사용자 정보를 조회하는 쿼리 -->
-    <select id="findByUserIdAndPassword" resultType="Hashmap">
+    <select id="findByUserId" resultType="Hashmap">
         SELECT userID
              , userRank
              , userName
+             , userPW
         FROM user
         WHERE userID = #{userID}
-        AND userPW = #{userPW}
     </select>
 
 </mapper>

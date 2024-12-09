@@ -17,6 +17,7 @@ public enum ResponseCode {
     SESSION_EXPIRED(401, "406", "세션 만료"),
     DATABASE_ERROR(500, "500", "데이터베이스 오류 발생"),
     INTERNAL_SERVER_ERROR(500, "501", "서버 오류 발생"),
+    NO_ROWS_AFFECTED(500, "502", "요청 리소스에 변화가 반영되지 않음"),
     UNKNOWN(999, "999", "확인 불가");
 
     private final int httpStatus;

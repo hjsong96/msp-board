@@ -28,7 +28,7 @@ public class SessionInterceptor implements HandlerInterceptor {
         }
         
         // 세션 유효성 검사
-        if (session == null || sessionManage.getAttribute("userID") == null) {
+        if (sessionManage.getAttribute("userID") == null) {
         	throw new SessionExpiredException(HttpStatus.UNAUTHORIZED, "세션이 만료되었습니다.");
         }
         return true;

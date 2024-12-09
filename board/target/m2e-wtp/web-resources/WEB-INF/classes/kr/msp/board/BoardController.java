@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +21,16 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import kr.morpheus.gateway.module.AbstractModule;
+import kr.msp.dto.Board;
+import kr.msp.dto.BoardRequest;
+import kr.msp.dto.User;
 import kr.msp.response.Response;
 import kr.msp.response.ResponseCode;
 import kr.msp.response.ResponseHeader;
 import kr.msp.util.Utils;
 
 @Controller
-@RequestMapping("/api/boardList")
+@RequestMapping("/api")
 public class BoardController extends AbstractModule {
 	
 	private static final Logger logger = LoggerFactory.getLogger(BoardController.class);
@@ -41,19 +46,44 @@ public class BoardController extends AbstractModule {
 		this.env = env;
 	}
 	
-	@GetMapping
+	@GetMapping("/boardList")
 	public ModelAndView index() {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("boardList");
 		return modelAndView;
 	}
 	
-	@PostMapping
-	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> getBoardList() {
-		List<Map<String, Object>> boardList = boardService.getBoardList();
+	@PostMapping("/boardList")
+	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> getBoardList(@RequestBody @Valid BoardRequest boardRequest) {
+		List<Map<String, Object>> boardList = boardService.getBoardList(boardRequest);
+		int totalPages = boardService.getBoardTotalCount(boardRequest.getSize(), boardRequest.getSearchType(), boardRequest.getSearchKeyword());
 		
 		Map<String, Object> responseMap = new HashMap<>();
 		responseMap.put("boardList", boardList);
+		responseMap.put("searchType", boardRequest.getSearchType());
+		responseMap.put("searchKeyword", boardRequest.getSearchKeyword());
+		responseMap.put("page", boardRequest.getPage());
+		responseMap.put("size", boardRequest.getSize());
+		responseMap.put("totalPages", totalPages);
+		
+		return Utils.buildOkResponse(ResponseCode.OK, responseMap);
+	}
+	
+	@PostMapping("/board/write")
+	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> writeBoard(@RequestBody @Valid Board board) {
+		
+		Map<String,Object> responseMap = new HashMap<>();
+		boardService.writeBoard(board);
+		
+		return Utils.buildOkResponse(ResponseCode.OK, responseMap);
+	}
+	
+	@PostMapping("/board/edit")
+	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> editBoard(@RequestBody @Valid Board board) {
+		
+		Map<String,Object> responseMap = new HashMap<>();
+		boardService.editBoard(board);
+		
 		return Utils.buildOkResponse(ResponseCode.OK, responseMap);
 	}
 	

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import kr.morpheus.gateway.module.AbstractModule;
+import kr.msp.dto.LoginRequest;
 import kr.msp.dto.User;
 import kr.msp.response.Response;
 import kr.msp.response.ResponseCode;
@@ -53,15 +54,16 @@ public class LoginController extends AbstractModule {
 	}
 
     @PostMapping("/login")
-    public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> login(@Valid @RequestBody User user) {
+    public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> login(@Valid @RequestBody LoginRequest loginRequest) {
         Map<String, Object> responseMap = new HashMap<>();
         
     	//비즈니스 로직
-        Map<String, Object> checkedUser = loginService.findByUserIdAndPassword(user);
+        Map<String, Object> checkedUser = loginService.findByUserIdAndPassword(loginRequest);
         
         // 로그인 성공
         responseMap.putAll(checkedUser);
         sessionManage.setAttribute("userID", checkedUser.get("userID"));
+        sessionManage.setAttribute("userRank", checkedUser.get("userRank"));
         
         return Utils.buildOkResponse(ResponseCode.OK, responseMap);
     }

@@ -7,7 +7,6 @@ import lombok.Getter;
 @Getter
 public enum ResponseCode {
 	OK(200, "200", "성공"),
-	NO_CONTENT(204, "204", "서버 요청은 성공했으나, 클라이언트에 보내줄 데이터가 없음"),
 	MISSING_PARAMETER(400, "400", "필수 파라미터를 지정하지 않음"),
     BAD_REQUEST(400, "401", "클라이언트 요청 파라미터 형식이나 내용이 잘못됨"),
     UNAUTHORIZED(401, "402", "요구되는 인증 정보가 누락되었거나 잘못됨"),

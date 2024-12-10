@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import kr.msp.dto.CheckIDRequest;
+import kr.msp.dto.JoinRequest;
 import kr.msp.dto.User;
 import kr.msp.response.Response;
 import kr.msp.response.ResponseCode;
@@ -38,19 +40,19 @@ public class JoinController {
     }
     
 	@PostMapping("/checkID")
-	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> checkID(@RequestBody @Valid User user) {
+	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> checkID(@RequestBody @Valid CheckIDRequest checkIDRequest) {
 		Map<String, Object> responseMap = new HashMap<String, Object>();
 		
-		joinService.checkUserIdExists(user);
+		joinService.checkUserIdExists(checkIDRequest);
 		
 		return Utils.buildOkResponse(ResponseCode.OK, responseMap);
 	}
 	
 	@PostMapping("/join")
-	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> joinUser(@RequestBody @Valid User user) {
+	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> joinUser(@RequestBody @Valid JoinRequest joinRequset) {
 		Map<String, Object> responseMap = new HashMap<String, Object>();
 		
-		joinService.joinUser(user);
+		joinService.joinUser(joinRequset);
 		
 		return Utils.buildOkResponse(ResponseCode.OK, responseMap);
 	}

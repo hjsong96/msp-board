@@ -1,6 +1,5 @@
 package kr.msp.board;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -11,27 +10,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import kr.msp.dto.Board;
-import kr.msp.dto.BoardRequest;
-import kr.msp.dto.User;
+import kr.msp.dto.DeleteBoardListRequest;
+import kr.msp.dto.DeleteBoardRequest;
+import kr.msp.dto.EditBoardRequest;
+import kr.msp.dto.WriteBoardRequest;
+import kr.msp.exception.AccessDeniedException;
 import kr.msp.exception.NoParameterException;
 import kr.msp.exception.NoRowsAffectedException;
 import kr.msp.exception.NotFoundException;
+import kr.msp.login.SessionManager;
 
 @Service
 public class BoardService {
 	
 	private final SqlSessionTemplate sqlSessionTemplate;
+	private final SessionManager sessionManage;
 	
-	public BoardService(SqlSessionTemplate sqlSessionTemplate) {
+	public BoardService(SqlSessionTemplate sqlSessionTemplate, SessionManager sessionManager) {
 		this.sqlSessionTemplate = sqlSessionTemplate;
+		this.sessionManage = sessionManager;
 	}
 
-	public List<Map<String, Object>> getBoardList(BoardRequest boardRequest) {
-		
-		int page = boardRequest.getPage();
-		int size = boardRequest.getSize();
-		int searchType = boardRequest.getSearchType();
-		String searchKeyword = boardRequest.getSearchKeyword();
+	public List<Map<String, Object>> getBoardList(int page, int size, int searchType, String searchKeyword) {
 		
 		int offset = (page - 1) * size;
 		
@@ -52,14 +52,10 @@ public class BoardService {
         return (int) Math.ceil((double) totalCount / size);
 	}
 
-	public void writeBoard(Board board) {
-		
-		if (board.getBoardTitle() == null || board.getBoardType() < 0 || board.getBoardContent() == null || board.getUserID() == null) {
-            throw new NoParameterException(HttpStatus.BAD_REQUEST, "필수 파라미터를 지정하지 않음");
-		}
+	public void writeBoard(WriteBoardRequest writeBoardRequest) {
 		
 		BoardMapper boardMapper = sqlSessionTemplate.getMapper(BoardMapper.class);
-		int count = boardMapper.writeBoard(board);
+		int count = boardMapper.writeBoard(writeBoardRequest);
 		
 		if (count == 0) {
 			throw new NoRowsAffectedException(HttpStatus.INTERNAL_SERVER_ERROR, "요청 리소스에 변화가 반영되지 않음");
@@ -67,18 +63,56 @@ public class BoardService {
 
 	}
 
-	public void editBoard(Board board) {
+	public void editBoard(EditBoardRequest editBoardRequest) {
 		
-		if (board.getBoardNo() <0 || board.getBoardTitle() == null || board.getBoardType() < 0 || board.getBoardContent() == null || board.getUserID() == null) {
-			throw new NoParameterException(HttpStatus.BAD_REQUEST, "필수 파라미터를 지정하지 않음");
-		}
+		int userRank = (int) sessionManage.getAttribute("userRank");
 		
+		editBoardRequest.setUserRank(userRank);
+		System.out.println(userRank);
+
 		BoardMapper boardMapper = sqlSessionTemplate.getMapper(BoardMapper.class);
-		int count = boardMapper.editBoard(board);
+		int count = boardMapper.editBoard(editBoardRequest);
 		
 		if (count == 0) {
-			throw new NoRowsAffectedException(HttpStatus.INTERNAL_SERVER_ERROR, "요청 리소스에 변화가 반영되지 않음");
+			if (editBoardRequest.getUserRank() == 1) {
+				throw new NoRowsAffectedException(HttpStatus.INTERNAL_SERVER_ERROR, "요청 리소스에 변화가 반영되지 않음");
+			} else {
+				throw new AccessDeniedException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다.");
+			}
 		}
+	}
+
+	public void deleteBoard(DeleteBoardRequest deleteBoardRequest) {
 		
+		int userRank = (int) sessionManage.getAttribute("userRank");
+		deleteBoardRequest.setUserRank(userRank);
+		
+		BoardMapper boardMapper = sqlSessionTemplate.getMapper(BoardMapper.class);
+		int count = boardMapper.deleteBoard(deleteBoardRequest);
+		
+		if (count == 0) {
+			if (deleteBoardRequest.getUserRank() == 1) {
+				throw new NoRowsAffectedException(HttpStatus.INTERNAL_SERVER_ERROR, "요청 리소스에 변화가 반영되지 않음");
+			} else {
+				throw new AccessDeniedException(HttpStatus.BAD_REQUEST, "삭제 권한이 없습니다.");
+			}
+		}
+	}
+
+	public void deleteBoardList(DeleteBoardListRequest deleteBoardListRequest) {
+		
+		int userRank = (int) sessionManage.getAttribute("userRank");
+		deleteBoardListRequest.setUserRank(userRank);
+		
+		BoardMapper boardMapper = sqlSessionTemplate.getMapper(BoardMapper.class);
+		int count = boardMapper.deleteBoardList(deleteBoardListRequest);
+		
+		if (count == 0) {
+			if (deleteBoardListRequest.getUserRank() == 1) {
+				throw new NoRowsAffectedException(HttpStatus.INTERNAL_SERVER_ERROR, "요청 리소스에 변화가 반영되지 않음");
+			} else {
+				throw new AccessDeniedException(HttpStatus.BAD_REQUEST, "삭제 권한이 없습니다.");
+			}
+		}
 	}
 }

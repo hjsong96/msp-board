@@ -53,16 +53,36 @@
 	</insert>
 	
 	<update id="editBoard">
-		UPDATE board b
-		JOIN user u ON b.userID = u.userID 
+		UPDATE board
 		SET
-			b.userID=#{userID},
-			b.boardType=#{boardType},
-			b.boardTitle=#{boardTitle},
-			b.boardContent=#{boardContent},
-			b.boardUpdateDate=NOW()
-		WHERE b.boardNo=#{boardNo}
-		AND (u.userRank = 1 OR b.userID = #{userID})
+		    userID = #{userID},
+		    boardType = #{boardType},
+		    boardTitle = #{boardTitle},
+		    boardContent = #{boardContent},
+		    boardUpdateDate = NOW()
+		WHERE boardNo = #{boardNo}
+		AND (#{userRank} = 1 OR userID = #{userID})
+	</update>
+	
+	<update id="deleteBoard">
+		UPDATE board
+		SET
+		    boardUpdateDate = NOW(),
+		    boardDelYn = "Y"
+		WHERE boardNo = #{boardNo}
+		AND (#{userRank} = 1 OR userID = #{userID})
+	</update>
+	
+	<update id="deleteBoardList">
+		UPDATE board
+		SET
+		    boardUpdateDate = NOW(),
+		    boardDelYn = "Y"
+		WHERE boardNo IN
+			<foreach collection="boardNos" item="boardNo" open="(" separator="," close=")">
+				#{boardNo}
+			</foreach>
+		AND #{userRank} = 1
 	</update>
 
 

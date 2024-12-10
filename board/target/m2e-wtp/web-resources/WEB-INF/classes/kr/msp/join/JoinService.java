@@ -8,6 +8,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import kr.msp.dto.CheckIDRequest;
+import kr.msp.dto.JoinRequest;
 import kr.msp.dto.User;
 import kr.msp.exception.NoParameterException;
 import kr.msp.exception.ResourceConflictException;
@@ -23,34 +25,25 @@ public class JoinService {
 		this.sqlSessionTemplate = sqlSessionTemplate;
 		this.passwordEncoder = new BCryptPasswordEncoder();
 	}
-
-	public void joinUser(User user) {
-		
-		if (user.getUserID() == null || user.getUserPW() == null || user.getUserName() == null) {
-			throw new NoParameterException(HttpStatus.BAD_REQUEST , "필수 파라미터를 지정하지 않았습니다.");
-		}
-		
-		// 비밀번호 암호화
-		String encodedPassword = passwordEncoder.encode(user.getUserPW());
-		user.setUserPW(encodedPassword);
+	
+	public void checkUserIdExists(CheckIDRequest checkIDRequest) {
 		
 		JoinMapper joinMapper = sqlSessionTemplate.getMapper(JoinMapper.class);
-		joinMapper.joinUser(user);
-
-	}
-
-	public void checkUserIdExists(User user) {
-		
-		if (user.getUserID() == null) {
-			throw new NoParameterException(HttpStatus.BAD_REQUEST, "필수 파라미터를 지정하지 않았습니다.");
-		}
-		
-		JoinMapper joinMapper = sqlSessionTemplate.getMapper(JoinMapper.class);
-		int count = joinMapper.checkUserIdExists(user);
+		int count = joinMapper.checkUserIdExists(checkIDRequest);
 		
 		if (count > 0) {
 			throw new ResourceConflictException(HttpStatus.CONFLICT, "요청 리소스가 이미 존재합니다.");
 		}
+	}
+	
+	public void joinUser(JoinRequest joinRequset) {
+		
+		// 비밀번호 암호화
+		String encodedPassword = passwordEncoder.encode(joinRequset.getUserPW());
+		joinRequset.setUserPW(encodedPassword);
+		
+		JoinMapper joinMapper = sqlSessionTemplate.getMapper(JoinMapper.class);
+		joinMapper.joinUser(joinRequset);
 	}
 
 }

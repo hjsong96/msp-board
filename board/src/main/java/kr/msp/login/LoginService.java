@@ -10,10 +10,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import kr.msp.dto.LoginRequest;
 import kr.msp.dto.User;
-import kr.msp.exception.NoContentException;
 import kr.msp.exception.NoParameterException;
 import kr.msp.exception.NotFoundException;
+import kr.msp.notUsed.NoContentException;
 
 @Service
 public class LoginService {
@@ -27,20 +28,17 @@ public class LoginService {
 		this.passwordEncoder = new BCryptPasswordEncoder();
 	}
     
-    public Map<String, Object> findByUserIdAndPassword(User user) {
-        if (user.getUserID() == null || user.getUserPW() == null) {
-            throw new NoParameterException(HttpStatus.BAD_REQUEST, "필수 파라미터를 지정하지 않음");
-        }
+    public Map<String, Object> findByUserIdAndPassword(LoginRequest loginRequest) {
         
         LoginMapper loginMapper = sqlSessionTemplate.getMapper(LoginMapper.class);
-        Map<String, Object> userMap = loginMapper.findByUserId(user);
+        Map<String, Object> userMap = loginMapper.findByUserId(loginRequest);
 
         if (userMap == null || userMap.isEmpty()) {
             throw new NotFoundException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다.");
         }
         
         String storedPassword = (String) userMap.get("userPW");
-        if (!passwordEncoder.matches(user.getUserPW(), storedPassword)) {
+        if (!passwordEncoder.matches(loginRequest.getUserPW(), storedPassword)) {
         	throw new NotFoundException(HttpStatus.NOT_FOUND, "비밀번호가 일치하지 않습니다.");
 		}
         

@@ -2,13 +2,13 @@ package kr.msp.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class NoContentException extends RuntimeException {
-
+public class AccessDeniedException extends RuntimeException {
+	
 	private static final long serialVersionUID = 1L;
 	private final HttpStatus status;
     private final String message;
 
-    public NoContentException(HttpStatus status, String message) {
+    public AccessDeniedException(HttpStatus status, String message) {
         super(message);
         this.status = status;
         this.message = message;
@@ -21,4 +21,5 @@ public class NoContentException extends RuntimeException {
     public String getMessage() {
         return message;
     }
+
 }

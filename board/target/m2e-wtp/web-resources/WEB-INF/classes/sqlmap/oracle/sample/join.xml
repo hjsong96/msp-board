@@ -5,15 +5,15 @@
 
 <mapper namespace="kr.msp.join.JoinMapper">
 
-    <insert id="joinUser">
-    	INSERT INTO user (userID, userPW, userName) 
-    	VALUES (#{userID}, #{userPW}, #{userName})
-    </insert>
-    
     <select id="checkUserIdExists" resultType="int">
     	SELECT COUNT(*)
     	FROM user
     	WHERE userID=#{userID}
     </select>
+
+    <insert id="joinUser">
+    	INSERT INTO user (userID, userPW, userName) 
+    	VALUES (#{userID}, #{userPW}, #{userName})
+    </insert>
 
 </mapper>

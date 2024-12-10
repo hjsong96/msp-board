@@ -8,9 +8,10 @@ import javax.validation.Valid;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import kr.msp.dto.Board;
-import kr.msp.dto.BoardRequest;
-import kr.msp.dto.User;
+import kr.msp.dto.DeleteBoardListRequest;
+import kr.msp.dto.DeleteBoardRequest;
+import kr.msp.dto.EditBoardRequest;
+import kr.msp.dto.WriteBoardRequest;
 
 @Mapper
 public interface BoardMapper {
@@ -19,9 +20,13 @@ public interface BoardMapper {
 
 	int getBoardTotalCount(@Param("searchType") int searchType, @Param("searchKeyword") String searchKeyword);
 
-	int writeBoard(Board board);
+	int writeBoard(WriteBoardRequest writeBoardRequest);
 
-	int editBoard(Board board);
+	int editBoard(EditBoardRequest editBoardRequest);
+
+	int deleteBoard(DeleteBoardRequest deleteBoardRequest);
+
+	int deleteBoardList(DeleteBoardListRequest deleteBoardListRequest);
 
 
 }

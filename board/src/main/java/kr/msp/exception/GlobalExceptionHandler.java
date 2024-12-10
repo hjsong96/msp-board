@@ -1,10 +1,6 @@
 package kr.msp.exception;
 
-import java.nio.file.AccessDeniedException;
 import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.SQLSyntaxErrorException;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.naming.AuthenticationException;
@@ -15,7 +11,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.jdbc.BadSqlGrammarException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -42,15 +39,37 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> handleValidationExceptions(MethodArgumentNotValidException e) {
         logger.warn("클라이언트 오류: {}", e.getMessage());
+        
+        BindingResult bindingResult = e.getBindingResult();
+        
+        for (FieldError fieldError : bindingResult.getFieldErrors()) {
+            String fieldName = fieldError.getField();
+            String errorMessage = fieldError.getDefaultMessage();
+            
+            logger.debug("FieldError - field: {}, message: {}", fieldName, errorMessage);
+            
+            // @NotNull 오류 처리
+            if (errorMessage.contains("널이어서는 안됩니다")) {
+                logger.warn("클라이언트 오류 (@NotNull): 필드 {}에 대한 값이 없습니다.", fieldName);
+                return Utils.buildBadResponse(ResponseCode.MISSING_PARAMETER);
+            }
+            
+            // @Pattern 오류 처리
+            if (errorMessage.contains("일치")) {
+                logger.warn("클라이언트 오류 (@Pattern): 필드 {}의 값이 패턴에 맞지 않습니다.", fieldName);
+                return Utils.buildBadResponse(ResponseCode.BAD_REQUEST);
+            }
+
+            // @Size 오류 처리
+            if (errorMessage.contains("크기")) {
+                logger.warn("클라이언트 오류 (@Size): 필드 {}의 길이가 제한을 초과하거나 미만입니다.", fieldName);
+                return Utils.buildBadResponse(ResponseCode.BAD_REQUEST);
+            }
+        }
+        
         return Utils.buildBadResponse(ResponseCode.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NoContentException.class)
-    public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> handleNoContentException(NoContentException e) {
-        logger.warn("사용자 정의 예외: {}", e.getMessage());
-        return Utils.buildBadResponse(ResponseCode.NO_CONTENT);
-    }
-    
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> handleMalformedJson(HttpMessageNotReadableException e) {
     	logger.error("제이슨 오류: {}", e.getMessage(), e);

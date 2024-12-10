@@ -2,12 +2,14 @@ package kr.msp.join;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import kr.msp.dto.CheckIDRequest;
+import kr.msp.dto.JoinRequest;
 import kr.msp.dto.User;
 
 @Mapper
 public interface JoinMapper {
 
-	int joinUser(User user);
+	int joinUser(JoinRequest joinRequest);
 
-	int checkUserIdExists(User user);
+	int checkUserIdExists(CheckIDRequest checkIDRequest);
 }

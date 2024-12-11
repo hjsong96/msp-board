@@ -22,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import kr.morpheus.gateway.module.AbstractModule;
 import kr.msp.dto.Board;
+import kr.msp.dto.BoardDetailRequest;
 import kr.msp.dto.BoardListRequest;
 import kr.msp.dto.DeleteBoardListRequest;
 import kr.msp.dto.DeleteBoardRequest;
@@ -111,6 +112,23 @@ public class BoardController extends AbstractModule {
 		
 		Map<String,Object> responseMap = new HashMap<>();
 		boardService.deleteBoardList(deleteBoardListRequest);
+		
+		return Utils.buildOkResponse(ResponseCode.OK, responseMap);
+	}
+	
+	@PostMapping("/board/detail")
+	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> boardDetail(@RequestBody @Valid BoardDetailRequest boardDetailRequest) {
+		
+		int size = boardDetailRequest.getSize();
+		
+		Map<String,Object> responseMap = new HashMap<>();
+		Map<String, Object> board = boardService.findBoardByBoardNo(boardDetailRequest);
+	
+		List<Map<String, Object>> commentList = boardService.findCommentListByBoardNo(boardDetailRequest, size);
+		
+		responseMap.put("board", board);
+		responseMap.put("commentList", commentList);
+		responseMap.put("size", size);
 		
 		return Utils.buildOkResponse(ResponseCode.OK, responseMap);
 	}

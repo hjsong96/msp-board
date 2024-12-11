@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import kr.msp.dto.BoardDetailRequest;
 import kr.msp.dto.DeleteBoardListRequest;
 import kr.msp.dto.DeleteBoardRequest;
 import kr.msp.dto.EditBoardRequest;
@@ -27,6 +28,10 @@ public interface BoardMapper {
 	int deleteBoard(DeleteBoardRequest deleteBoardRequest);
 
 	int deleteBoardList(DeleteBoardListRequest deleteBoardListRequest);
+
+	Map<String, Object> findBoardByBoardNo(int boardNo);
+
+	List<Map<String, Object>> findCommentListByBoardNo(@Param("size") int size, @Param("boardNo") int boardNo);
 
 
 }

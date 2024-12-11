@@ -2,6 +2,7 @@ package kr.msp.board;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.validation.Valid;
 
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import kr.msp.dto.Board;
+import kr.msp.dto.BoardDetailRequest;
 import kr.msp.dto.DeleteBoardListRequest;
 import kr.msp.dto.DeleteBoardRequest;
 import kr.msp.dto.EditBoardRequest;
@@ -72,6 +74,8 @@ public class BoardService {
 
 		BoardMapper boardMapper = sqlSessionTemplate.getMapper(BoardMapper.class);
 		int count = boardMapper.editBoard(editBoardRequest);
+		System.out.println("=========================================");
+		System.out.println(count);
 		
 		if (count == 0) {
 			if (editBoardRequest.getUserRank() == 1) {
@@ -114,5 +118,24 @@ public class BoardService {
 				throw new AccessDeniedException(HttpStatus.BAD_REQUEST, "삭제 권한이 없습니다.");
 			}
 		}
+	}
+
+	public Map<String, Object> findBoardByBoardNo(BoardDetailRequest boardDetailRequest) {
+		
+		BoardMapper boardMapper = sqlSessionTemplate.getMapper(BoardMapper.class);
+		Map<String, Object> board = boardMapper.findBoardByBoardNo(boardDetailRequest.getBoardNo());
+		
+		if (board == null || board.isEmpty()) {
+			throw new NotFoundException(HttpStatus.NOT_FOUND, "보드를 찾을 수 없습니다.");
+		}
+		return board;
+	}
+
+	public List<Map<String, Object>> findCommentListByBoardNo(BoardDetailRequest boardDetailRequest, int size) {
+		
+		BoardMapper boardMapper = sqlSessionTemplate.getMapper(BoardMapper.class);
+		List<Map<String, Object>> commentdList = boardMapper.findCommentListByBoardNo(size, boardDetailRequest.getBoardNo());
+		
+		return commentdList;
 	}
 }

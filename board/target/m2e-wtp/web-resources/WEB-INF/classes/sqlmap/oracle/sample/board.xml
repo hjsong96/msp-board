@@ -84,6 +84,41 @@
 			</foreach>
 		AND #{userRank} = 1
 	</update>
-
+	
+	<select id="findBoardByBoardNo">
+		SELECT 
+		    b.boardNo, 
+		    b.boardType, 
+		    b.boardTitle, 
+		    b.boardContent, 
+		    DATE_FORMAT(b.boardCreateDate, '%Y-%m-%d') AS boardCreateDate,
+		    u.userName AS boardWriter
+		FROM 
+		    board b
+		LEFT JOIN 
+		    user u ON b.userId = u.userId -- 게시물 작성자 이름
+		WHERE 
+		    b.boardNo = #{boardNo}
+	</select>
+	
+	<select id="findCommentListByBoardNo" resultType="HashMap">
+		SELECT
+			c.commentNo, 
+			c.commentContent,
+			DATE_FORMAT(c.commentCreateDate, '%Y-%m-%d') AS commentCreateDate, 
+			u.userName AS commentWriter
+		FROM 
+			comment c
+		LEFT JOIN
+			user u ON c.userID = u.userID
+		WHERE
+			c.boardNo=#{boardNo}
+		AND 
+			commentDelYn="N"
+		ORDER BY 
+			commentCreateDate ASC, 
+			c.commentNo ASC
+		LIMIT #{size}
+	</select>
 
 </mapper>

@@ -21,14 +21,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import kr.morpheus.gateway.module.AbstractModule;
-import kr.msp.dto.Board;
+import kr.morpheus.gateway.protocol.Request;
+import kr.morpheus.gateway.protocol.RequestHeader;
 import kr.msp.dto.BoardDetailRequest;
 import kr.msp.dto.BoardListRequest;
 import kr.msp.dto.DeleteBoardListRequest;
 import kr.msp.dto.DeleteBoardRequest;
 import kr.msp.dto.EditBoardRequest;
-import kr.msp.dto.User;
+import kr.msp.dto.LoginRequest;
 import kr.msp.dto.WriteBoardRequest;
+import kr.msp.notUsed.Board;
+import kr.msp.notUsed.User;
 import kr.msp.response.Response;
 import kr.msp.response.ResponseCode;
 import kr.msp.response.ResponseHeader;
@@ -59,12 +62,12 @@ public class BoardController extends AbstractModule {
 	}
 	
 	@PostMapping("/boardList")
-	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> getBoardList(@RequestBody @Valid BoardListRequest boardListRequest) {
+	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> getBoardList(@RequestBody @Valid Request<RequestHeader, BoardListRequest> request) {
 		
-		int page = boardListRequest.getPage();
-		int size = boardListRequest.getSize();
-		int searchType = boardListRequest.getSearchType();
-		String searchKeyword = boardListRequest.getSearchKeyword();
+		int page = request.getBody().getPage();
+		int size = request.getBody().getSize();
+		int searchType = request.getBody().getSearchType();
+		String searchKeyword = request.getBody().getSearchKeyword();
 		
 		List<Map<String, Object>> boardList = boardService.getBoardList(page, size, searchType, searchKeyword);
 		int totalPages = boardService.getBoardTotalCount(size, searchType, searchKeyword);
@@ -81,50 +84,50 @@ public class BoardController extends AbstractModule {
 	}
 	
 	@PostMapping("/board/write")
-	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> writeBoard(@RequestBody @Valid WriteBoardRequest writeBoardRequest) {
+	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> writeBoard(@RequestBody @Valid Request<RequestHeader, WriteBoardRequest> request) {
 		
 		Map<String,Object> responseMap = new HashMap<>();
-		boardService.writeBoard(writeBoardRequest);
+		boardService.writeBoard(request.getBody());
 		
 		return Utils.buildOkResponse(ResponseCode.OK, responseMap);
 	}
 	
 	@PostMapping("/board/edit")
-	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> editBoard(@RequestBody @Valid EditBoardRequest editBoardRequest) {
+	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> editBoard(@RequestBody @Valid Request<RequestHeader, EditBoardRequest> request) {
 		
 		Map<String,Object> responseMap = new HashMap<>();
-		boardService.editBoard(editBoardRequest);
+		boardService.editBoard(request.getBody());
 		
 		return Utils.buildOkResponse(ResponseCode.OK, responseMap);
 	}
 	
 	@PostMapping("/board/delete")
-	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> deleteBoard(@RequestBody @Valid DeleteBoardRequest deleteBoardRequest) {
+	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> deleteBoard(@RequestBody @Valid Request<RequestHeader, DeleteBoardRequest> request) {
 		
 		Map<String,Object> responseMap = new HashMap<>();
-		boardService.deleteBoard(deleteBoardRequest);
+		boardService.deleteBoard(request.getBody());
 		
 		return Utils.buildOkResponse(ResponseCode.OK, responseMap);
 	}
 	
 	@PostMapping("/boardList/delete")
-	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> deleteBoardList(@RequestBody @Valid DeleteBoardListRequest deleteBoardListRequest) {
+	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> deleteBoardList(@RequestBody @Valid Request<RequestHeader, DeleteBoardListRequest> request) {
 		
 		Map<String,Object> responseMap = new HashMap<>();
-		boardService.deleteBoardList(deleteBoardListRequest);
+		boardService.deleteBoardList(request.getBody());
 		
 		return Utils.buildOkResponse(ResponseCode.OK, responseMap);
 	}
 	
 	@PostMapping("/board/detail")
-	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> boardDetail(@RequestBody @Valid BoardDetailRequest boardDetailRequest) {
+	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> boardDetail(@RequestBody @Valid Request<RequestHeader, BoardDetailRequest> request) {
 		
-		int size = boardDetailRequest.getSize();
+		int size = request.getBody().getSize();
 		
 		Map<String,Object> responseMap = new HashMap<>();
-		Map<String, Object> board = boardService.findBoardByBoardNo(boardDetailRequest);
+		Map<String, Object> board = boardService.findBoardByBoardNo(request.getBody());
 	
-		List<Map<String, Object>> commentList = boardService.findCommentListByBoardNo(boardDetailRequest, size);
+		List<Map<String, Object>> commentList = boardService.findCommentListByBoardNo(request.getBody(), size);
 		
 		responseMap.put("board", board);
 		responseMap.put("commentList", commentList);

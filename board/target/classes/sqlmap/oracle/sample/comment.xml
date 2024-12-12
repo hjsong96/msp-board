@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.msp.comment.CommentMapper">
+
+	<insert id="writeComment">
+		INSERT INTO comment (userID, boardNo, commentContent, commentCreateDate, commentUpdateDate, commentDelYn)
+		VALUES (#{userID}, #{boardNo}, #{commentContent}, NOW(), NOW(), "N")
+	</insert>
+	
+	<update id="plusCommentCount">
+		UPDATE board
+		SET 
+			commentCount = COALESCE(commentCount, 0) + 1
+		WHERE boardNo=#{boardNo}
+	</update>
+	
+	<update id="editComment">
+		UPDATE comment
+		SET
+		    userID = #{userID},
+		    commentContent = #{commentContent},
+		    commentUpdateDate = NOW()
+		WHERE boardNo = #{boardNo}
+		AND commentNo = #{commentNo}
+		AND (#{userRank} = 1 OR userID = #{userID})
+	</update>
+	
+	<update id="deleteComment">
+		UPDATE comment
+		SET
+		    commentUpdateDate = NOW(),
+		    commentDelYn = "Y"
+		WHERE boardNo = #{boardNo}
+		AND commentNo = #{commentNo}
+		AND (#{userRank} = 1 OR userID = #{userID})
+	</update>
+	
+	<update id="minusCommentCount">
+		UPDATE board
+		SET 
+			commentCount = COALESCE(commentCount, 0) - 1
+		WHERE boardNo=#{boardNo}
+	</update>
+
+</mapper>

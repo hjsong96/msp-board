@@ -1,6 +1,5 @@
 package kr.msp.dto;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
@@ -8,11 +7,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class BoardDetailRequest {
+public class DeleteCommentRequest extends UserRank {
 	
 	@NotNull
 	private int boardNo;
 	
-    @Min(value = 5)
-    private int size = 5;           
+	@NotNull
+	private int commentNo;
+
 }

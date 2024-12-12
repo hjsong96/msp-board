@@ -15,9 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import kr.morpheus.gateway.protocol.Request;
+import kr.morpheus.gateway.protocol.RequestHeader;
 import kr.msp.dto.CheckIDRequest;
 import kr.msp.dto.JoinRequest;
-import kr.msp.dto.User;
 import kr.msp.response.Response;
 import kr.msp.response.ResponseCode;
 import kr.msp.response.ResponseHeader;
@@ -40,19 +41,17 @@ public class JoinController {
     }
     
 	@PostMapping("/checkID")
-	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> checkID(@RequestBody @Valid CheckIDRequest checkIDRequest) {
+	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> checkID (@RequestBody @Valid Request<RequestHeader, CheckIDRequest> request) {
 		Map<String, Object> responseMap = new HashMap<String, Object>();
-		
-		joinService.checkUserIdExists(checkIDRequest);
-		
+		joinService.checkUserIdExists(request.getBody());
+        
 		return Utils.buildOkResponse(ResponseCode.OK, responseMap);
 	}
 	
 	@PostMapping("/join")
-	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> joinUser(@RequestBody @Valid JoinRequest joinRequset) {
+	public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> joinUser(@RequestBody @Valid Request<RequestHeader, @Valid JoinRequest> request) {
 		Map<String, Object> responseMap = new HashMap<String, Object>();
-		
-		joinService.joinUser(joinRequset);
+		joinService.joinUser(request.getBody());
 		
 		return Utils.buildOkResponse(ResponseCode.OK, responseMap);
 	}

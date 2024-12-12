@@ -5,7 +5,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 import kr.msp.dto.LoginRequest;
-import kr.msp.dto.User;
+import kr.msp.notUsed.User;
 
 @Mapper
 public interface LoginMapper {

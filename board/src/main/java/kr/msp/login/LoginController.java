@@ -21,9 +21,8 @@ import org.springframework.web.servlet.ModelAndView;
 import kr.morpheus.gateway.module.AbstractModule;
 import kr.morpheus.gateway.protocol.Request;
 import kr.morpheus.gateway.protocol.RequestHeader;
+import kr.msp.dto.CheckIDRequest;
 import kr.msp.dto.LoginRequest;
-import kr.msp.dto.User;
-import kr.msp.example.http.dto.RequestParameter;
 import kr.msp.response.Response;
 import kr.msp.response.ResponseCode;
 import kr.msp.response.ResponseHeader;
@@ -57,28 +56,38 @@ public class LoginController extends AbstractModule {
 	}
 
     @PostMapping("/login")
-    public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> login(@RequestBody @Valid Request<RequestHeader, LoginRequest> request) {
         Map<String, Object> responseMap = new HashMap<>();
         
     	//비즈니스 로직
-        Map<String, Object> checkedUser = loginService.findByUserIdAndPassword(loginRequest);
+        Map<String, Object> checkedUser = loginService.findByUserIdAndPassword(request.getBody());
         
         // 로그인 성공
         responseMap.putAll(checkedUser);
         sessionManage.setAttribute("userID", checkedUser.get("userID"));
         sessionManage.setAttribute("userRank", checkedUser.get("userRank"));
         
+    	if (sessionManage.getAttribute("userID") != null) {
+        	logger.info("로그인 성공");
+		} else {
+			logger.info("로그인 실패");
+		}
+        
         return Utils.buildOkResponse(ResponseCode.OK, responseMap);
     }
     
     @PostMapping("/logout")
-    public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> logout() {
+    public ResponseEntity<Response<ResponseHeader, Map<String, Object>>> logout(@RequestBody @Valid Request<RequestHeader, Object> request) {
     	sessionManage.invalidate();
     	
     	Map<String, Object> responseMap = new HashMap<>();
     	
+    	if (sessionManage.getAttribute("userID") == null) {
+        	logger.info("로그아웃 성공");
+		} else {
+			logger.info("로그아웃 실패");
+		}
+
     	return Utils.buildOkResponse(ResponseCode.OK, responseMap);
     }
-    
-    
 }

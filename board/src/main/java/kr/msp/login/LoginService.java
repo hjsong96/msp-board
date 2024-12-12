@@ -11,10 +11,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import kr.msp.dto.LoginRequest;
-import kr.msp.dto.User;
 import kr.msp.exception.NoParameterException;
 import kr.msp.exception.NotFoundException;
 import kr.msp.notUsed.NoContentException;
+import kr.msp.notUsed.User;
 
 @Service
 public class LoginService {

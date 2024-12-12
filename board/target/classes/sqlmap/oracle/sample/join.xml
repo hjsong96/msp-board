@@ -8,7 +8,7 @@
     <select id="checkUserIdExists" resultType="int">
     	SELECT COUNT(*)
     	FROM user
-    	WHERE userID=#{userI
+    	WHERE userID=#{userID}
     </select>
 
     <insert id="joinUser">

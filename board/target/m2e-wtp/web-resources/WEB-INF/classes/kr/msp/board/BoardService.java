@@ -10,7 +10,6 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import kr.msp.dto.Board;
 import kr.msp.dto.BoardDetailRequest;
 import kr.msp.dto.DeleteBoardListRequest;
 import kr.msp.dto.DeleteBoardRequest;
@@ -21,6 +20,7 @@ import kr.msp.exception.NoParameterException;
 import kr.msp.exception.NoRowsAffectedException;
 import kr.msp.exception.NotFoundException;
 import kr.msp.login.SessionManager;
+import kr.msp.notUsed.Board;
 
 @Service
 public class BoardService {
@@ -70,12 +70,9 @@ public class BoardService {
 		int userRank = (int) sessionManage.getAttribute("userRank");
 		
 		editBoardRequest.setUserRank(userRank);
-		System.out.println(userRank);
 
 		BoardMapper boardMapper = sqlSessionTemplate.getMapper(BoardMapper.class);
 		int count = boardMapper.editBoard(editBoardRequest);
-		System.out.println("=========================================");
-		System.out.println(count);
 		
 		if (count == 0) {
 			if (editBoardRequest.getUserRank() == 1) {

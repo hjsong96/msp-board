@@ -26,4 +26,6 @@ public class BoardListRequest {
     @Size(max = 20)
     private String searchKeyword = ""; 
 
+    private int totalPages;
+    
 }

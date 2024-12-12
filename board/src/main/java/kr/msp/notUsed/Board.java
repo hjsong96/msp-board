@@ -1,4 +1,4 @@
-package kr.msp.dto;
+package kr.msp.notUsed;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;

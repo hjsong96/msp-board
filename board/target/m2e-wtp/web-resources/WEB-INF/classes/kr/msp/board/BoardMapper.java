@@ -11,6 +11,7 @@ import org.apache.ibatis.annotations.Param;
 import kr.msp.dto.BoardDetailRequest;
 import kr.msp.dto.DeleteBoardListRequest;
 import kr.msp.dto.DeleteBoardRequest;
+import kr.msp.dto.DeleteCommentRequest;
 import kr.msp.dto.EditBoardRequest;
 import kr.msp.dto.WriteBoardRequest;
 
@@ -33,5 +34,5 @@ public interface BoardMapper {
 
 	List<Map<String, Object>> findCommentListByBoardNo(@Param("size") int size, @Param("boardNo") int boardNo);
 
-
+	int deleteComment(DeleteCommentRequest deleteCommentRequest);
 }

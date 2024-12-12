@@ -1,4 +1,4 @@
-package kr.msp.dto;
+package kr.msp.notUsed;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;

@@ -9,11 +9,20 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CheckIDRequest {
+public class WriteCommentRequest {
+	
+	@NotNull
+	private int boardNo;
 	
 	@NotNull
 	@Pattern(regexp = "^[a-zA-Z0-9]+$")
 	@Size(max = 6)
 	private String userID;
+	
+	@Size(min = 2)
+	@Size(max = 50)
+	@NotNull
+	private String commentContent;
+	
 
 }

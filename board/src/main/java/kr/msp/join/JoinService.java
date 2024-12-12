@@ -1,5 +1,7 @@
 package kr.msp.join;
 
+import javax.validation.Valid;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,9 +12,9 @@ import org.springframework.stereotype.Service;
 
 import kr.msp.dto.CheckIDRequest;
 import kr.msp.dto.JoinRequest;
-import kr.msp.dto.User;
 import kr.msp.exception.NoParameterException;
 import kr.msp.exception.ResourceConflictException;
+import kr.msp.notUsed.User;
 
 @Service
 public class JoinService {
@@ -26,7 +28,7 @@ public class JoinService {
 		this.passwordEncoder = new BCryptPasswordEncoder();
 	}
 	
-	public void checkUserIdExists(CheckIDRequest checkIDRequest) {
+	public void checkUserIdExists(@Valid CheckIDRequest checkIDRequest) {
 		
 		JoinMapper joinMapper = sqlSessionTemplate.getMapper(JoinMapper.class);
 		int count = joinMapper.checkUserIdExists(checkIDRequest);

@@ -28,7 +28,7 @@
 	           b.boardTitle,
 	           b.commentCount,
 	           DATE_FORMAT(boardCreateDate, '%Y-%m-%d') AS boardCreateDate,
-	           u.userName
+	           CONCAT(SUBSTRING(u.userName, 1, 1), REPEAT('*', CHAR_LENGTH(u.userName) - 2), SUBSTRING(u.userName, CHAR_LENGTH(u.userName), 1)) AS userName
 	    FROM board b
 	    LEFT JOIN user u ON b.userID = u.userID
 	    WHERE 
@@ -92,7 +92,7 @@
 		    b.boardTitle, 
 		    b.boardContent, 
 		    DATE_FORMAT(b.boardCreateDate, '%Y-%m-%d') AS boardCreateDate,
-		    u.userName AS boardWriter
+		    CONCAT(SUBSTRING(u.userName, 1, 1), REPEAT('*', CHAR_LENGTH(u.userName) - 2), SUBSTRING(u.userName, CHAR_LENGTH(u.userName), 1)) AS boardWriter 
 		FROM 
 		    board b
 		LEFT JOIN 
@@ -105,8 +105,8 @@
 		SELECT
 			c.commentNo, 
 			c.commentContent,
-			DATE_FORMAT(c.commentCreateDate, '%Y-%m-%d') AS commentCreateDate, 
-			u.userName AS commentWriter
+			DATE_FORMAT(c.commentCreateDate, '%Y-%m-%d') AS commentCreateDate,
+			CONCAT(SUBSTRING(u.userName, 1, 1), REPEAT('*', CHAR_LENGTH(u.userName) - 2), SUBSTRING(u.userName, CHAR_LENGTH(u.userName), 1)) AS commentWriter 
 		FROM 
 			comment c
 		LEFT JOIN

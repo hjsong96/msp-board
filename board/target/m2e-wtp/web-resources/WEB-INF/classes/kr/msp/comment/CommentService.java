@@ -28,6 +28,10 @@ public class CommentService{
 	}
 
 	public void writeComment(WriteCommentRequest writeCommentRequest) {
+		
+		String userID = (String) sessionManage.getAttribute("userID");
+		writeCommentRequest.setUserID(userID);
+		
 		CommentMapper commentMapper = sqlSessionTemplate.getMapper(CommentMapper.class);
 		int count = commentMapper.writeComment(writeCommentRequest);
 		
@@ -40,7 +44,10 @@ public class CommentService{
 
 	public void editComment(EditCommentRequest editCommentRequest) {
 		
+		String userID = (String) sessionManage.getAttribute("userID");
 		int userRank = (int) sessionManage.getAttribute("userRank");
+		
+		editCommentRequest.setUserID(userID);
 		editCommentRequest.setUserRank(userRank);
 		
 		CommentMapper commentMapper = sqlSessionTemplate.getMapper(CommentMapper.class);
@@ -56,7 +63,11 @@ public class CommentService{
 	}
 	
 	public void deleteComment(DeleteCommentRequest deleteCommentRequest) {
+		
+		String userID = (String) sessionManage.getAttribute("userID");
 		int userRank = (int) sessionManage.getAttribute("userRank");
+		
+		deleteCommentRequest.setUserID(userID);
 		deleteCommentRequest.setUserRank(userRank);
 		
 		CommentMapper commentMapper = sqlSessionTemplate.getMapper(CommentMapper.class);

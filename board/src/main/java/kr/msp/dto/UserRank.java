@@ -13,7 +13,6 @@ import lombok.Setter;
 @Getter
 public class UserRank {
 	
-	@NotNull
 	@Pattern(regexp = "^[a-zA-Z0-9]+$")
 	@Size(max = 6)
 	private String userID;

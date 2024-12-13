@@ -56,6 +56,9 @@ public class BoardService {
 
 	public void writeBoard(WriteBoardRequest writeBoardRequest) {
 		
+		String userID = (String) sessionManage.getAttribute("userID");
+		writeBoardRequest.setUserID(userID);
+		
 		BoardMapper boardMapper = sqlSessionTemplate.getMapper(BoardMapper.class);
 		int count = boardMapper.writeBoard(writeBoardRequest);
 		
@@ -67,8 +70,10 @@ public class BoardService {
 
 	public void editBoard(EditBoardRequest editBoardRequest) {
 		
+		String userID = (String) sessionManage.getAttribute("userID");
 		int userRank = (int) sessionManage.getAttribute("userRank");
 		
+		editBoardRequest.setUserID(userID);
 		editBoardRequest.setUserRank(userRank);
 
 		BoardMapper boardMapper = sqlSessionTemplate.getMapper(BoardMapper.class);
@@ -85,7 +90,10 @@ public class BoardService {
 
 	public void deleteBoard(DeleteBoardRequest deleteBoardRequest) {
 		
+		String userID = (String) sessionManage.getAttribute("userID");
 		int userRank = (int) sessionManage.getAttribute("userRank");
+		
+		deleteBoardRequest.setUserID(userID);
 		deleteBoardRequest.setUserRank(userRank);
 		
 		BoardMapper boardMapper = sqlSessionTemplate.getMapper(BoardMapper.class);
@@ -102,7 +110,10 @@ public class BoardService {
 
 	public void deleteBoardList(DeleteBoardListRequest deleteBoardListRequest) {
 		
+		String userID = (String) sessionManage.getAttribute("userID");
 		int userRank = (int) sessionManage.getAttribute("userRank");
+		
+		deleteBoardListRequest.setUserID(userID);
 		deleteBoardListRequest.setUserRank(userRank);
 		
 		BoardMapper boardMapper = sqlSessionTemplate.getMapper(BoardMapper.class);

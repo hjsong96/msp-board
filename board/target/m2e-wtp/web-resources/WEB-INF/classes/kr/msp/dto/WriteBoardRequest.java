@@ -28,7 +28,6 @@ public class WriteBoardRequest {
 	@Size(max = 100)
     private String boardContent;
 
-	@NotNull
 	@Pattern(regexp = "^[a-zA-Z0-9]+$")
 	@Size(max = 6)
 	private String userID;
